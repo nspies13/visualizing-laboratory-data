@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Ignore Data Folders
+data/
+Data/
