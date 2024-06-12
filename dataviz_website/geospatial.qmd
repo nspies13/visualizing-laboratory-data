@@ -1,0 +1,46 @@
+---
+title: "Analyzing Geospatial Data"
+---
+
+# Introduction
+
+Geospatial data is... \## TODO
+
+# Getting Started
+
+# Data
+
+## TODO
+
+::: panel-tabset
+## Basic
+
+![](images/clipboard-862254984.png)
+
+## Good
+
+![](images/clipboard-2020489380.png)
+
+## Better
+
+![](images/clipboard-464717865.png)
+
+## Best
+
+![](images/clipboard-2079783085.png)
+:::
+
+# Exercise #1 - Make a Map
+
+code code code
+
+map map map
+
+```{}
+```
+
+# Exercise #2 – Make It Pretty
+
+code code code
+
+map map map

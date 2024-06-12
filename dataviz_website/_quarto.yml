@@ -7,6 +7,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: geospatial.qmd
+        text: Geospatial
       - about.qmd
 
 format:

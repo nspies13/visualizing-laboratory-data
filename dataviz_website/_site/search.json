@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "dataviz_website",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "geospatial.html",
+    "href": "geospatial.html",
+    "title": "Analyzing Geospatial Data",
+    "section": "",
+    "text": "Geospatial data is… ## TODO"
+  },
+  {
+    "objectID": "geospatial.html#todo",
+    "href": "geospatial.html#todo",
+    "title": "Analyzing Geospatial Data",
+    "section": "TODO",
+    "text": "TODO\n\nBasicGoodBetterBest"
+  }
+]
