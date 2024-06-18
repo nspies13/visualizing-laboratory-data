@@ -8,6 +8,64 @@ Geospatial data is... \## TODO
 
 # Getting Started
 
+### Download the Data
+
+```{r}
+
+Sys.setenv(PROJ_LIB = "/usr/local/share/proj")  # Adjust this path as needed
+Sys.setenv(GDAL_DATA = "/usr/local/share/gdal")  # Adjust this path as needed
+
+# Install required packages if not already installed
+if (!requireNamespace("sf", quietly = TRUE)) {
+  install.packages("sf")
+}
+if (!requireNamespace("terra", quietly = TRUE)) {
+  install.packages("terra")
+}
+if (!requireNamespace("sp", quietly = TRUE)) {
+  install.packages("sp")
+}
+
+# Load libraries
+library(sf)
+library(terra)
+library(sp)
+
+# Geospatial data available at the geojson format
+tmp_geojson <- tempfile(fileext = ".geojson")
+download.file("https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/communes.geojson", tmp_geojson)
+
+library(sf)
+my_sf <- read_sf(tmp_geojson)
+
+# Since it is a bit too much data, I select only a subset of it:
+my_sf <- my_sf[substr(my_sf$code, 1, 2) %in% c(
+  "06", "83",
+  "13", "30", "34", "11", "66"
+), ]
+
+# Plot Map
+library(tidyverse)
+
+ggplot(my_sf) +
+  geom_sf(fill = "white", color = "black", linewidth = 0.3) +
+  theme_void()
+
+# Add numbers
+data <- read.table("https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/DATA/data_on_french_states.csv", header = T, sep = ";")
+
+# Make the merge
+my_sf_merged <- my_sf %>%
+  left_join(data, by = c("code" = "depcom")) %>%
+  # Note that if the number of restaurant is NA, it is in fact 0
+  mutate(nb_equip = ifelse(is.na(nb_equip), 0.01, nb_equip))
+
+# 
+ggplot(my_sf_merged) +
+  geom_sf(aes(fill = nb_equip)) +
+  theme_void()
+```
+
 # Data
 
 ## TODO
@@ -36,7 +94,7 @@ code code code
 
 map map map
 
-```{}
+```         
 ```
 
 # Exercise #2 – Make It Pretty
@@ -44,3 +102,13 @@ map map map
 code code code
 
 map map map
+
+## Scenario 1
+
+1.  1\) Rates-based data:
+
+    1.  Give options for three map types, make them pick.
+
+    2.  Give options for scales: State-![](images/clipboard-3168824045.png)
+
+    3.  Give options for colors and legends, make them pick.

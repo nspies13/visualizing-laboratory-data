@@ -26,5 +26,12 @@
     "title": "Analyzing Geospatial Data",
     "section": "TODO",
     "text": "TODO\n\nBasicGoodBetterBest"
+  },
+  {
+    "objectID": "geospatial.html#scenario-1",
+    "href": "geospatial.html#scenario-1",
+    "title": "Analyzing Geospatial Data",
+    "section": "Scenario 1",
+    "text": "Scenario 1\n\n1) Rates-based data:\n\nGive options for three map types, make them pick.\nGive options for scales: State-\nGive options for colors and legends, make them pick."
   }
 ]
