@@ -1,0 +1,110 @@
+---
+title: "Best Practices in Data Visualization"
+---
+
+# Introduction
+
+Geospatial data is... \## TODO
+
+# Getting Started
+
+### Download the Data
+
+```{r}
+
+# Set ggplot theme
+theme_ns <- theme(text = element_text(family = "Helvetica"),
+                  title = element_text(size = 14, margin = margin(0, 0, 8, 0)),
+                  plot.subtitle = element_text(size = 12, face = "plain", hjust = 0),
+                  plot.title = element_text(hjust = 0),
+                  axis.title = element_text(size = 12, face = "bold", margin = margin(4,4,4,4)),
+                  axis.title.x.bottom = element_text(face = "bold", margin = margin(4,0,0,0)),
+                  axis.title.y.left = element_text(face = "bold", margin = margin(0,4,0,0)),
+                  legend.title = element_text(face = "bold.italic", size = 12),
+                  axis.line = element_line(),
+                  axis.ticks = element_blank(),
+                  panel.grid = element_blank(), 
+                  panel.background = element_blank(),
+                  strip.text = element_text(size = 10, face = "bold.italic"),
+                  strip.background = element_blank())
+theme_set(theme_ns)
+
+# Install required packages if not already installed
+if (!requireNamespace("arrow", quietly = TRUE)) {
+  install.packages("arrow")
+}
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+if (!requireNamespace("ggdist", quietly = TRUE)) {
+  install.packages("ggdist")
+}
+
+library(tidyverse)
+
+# Download BMP data for analysis
+bmp_data <- arrow::read_feather("https://figshare.com/ndownloader/files/45407398")
+
+```
+
+# Comparing Distributions
+
+Let's start by comparing the distributions of potassium results.
+
+::: panel-tabset
+## Base
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+bmp_data |> 
+  slice_head(n = 1000) |>
+  ggplot(aes(y = potassium_plas, x = luo_h > 100)) + 
+    geom_boxplot() + 
+    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_x_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
+    theme(axis.title.x.bottom = element_blank())
+
+```
+
+## Good
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+bmp_data |> 
+  slice_head(n = 1000) |>
+  ggplot(aes(y = potassium_plas, x = luo_h > 100)) + 
+    geom_boxplot() + 
+    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_x_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
+    coord_flip() +
+    theme(axis.title.x.bottom = element_blank())
+
+```
+
+## Better
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+bmp_data |> 
+  slice_head(n = 1000) |>
+  ggplot(aes(y = potassium_plas, x = luo_h > 100)) + 
+    geom_boxplot() + 
+    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_x_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
+    coord_flip() +
+    theme(axis.title.x.bottom = element_blank())
+
+```
+
+## Best
+
+:::
