@@ -11,6 +11,21 @@ Geospatial data is... \## TODO
 ### Download the Data
 
 ```{r}
+# Install required packages if not already installed
+if (!requireNamespace("arrow", quietly = TRUE)) {
+  install.packages("arrow")
+}
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+if (!requireNamespace("ggdist", quietly = TRUE)) {
+  install.packages("ggdist")
+}
+if (!requireNamespace("ggpmisc", quietly = TRUE)) {
+  install.packages("ggpmisc")
+}
+
+library(tidyverse)
 
 # Set ggplot theme
 theme_ns <- theme(text = element_text(family = "Helvetica"),
@@ -28,19 +43,6 @@ theme_ns <- theme(text = element_text(family = "Helvetica"),
                   strip.text = element_text(size = 10, face = "bold.italic"),
                   strip.background = element_blank())
 theme_set(theme_ns)
-
-# Install required packages if not already installed
-if (!requireNamespace("arrow", quietly = TRUE)) {
-  install.packages("arrow")
-}
-if (!requireNamespace("tidyverse", quietly = TRUE)) {
-  install.packages("tidyverse")
-}
-if (!requireNamespace("ggdist", quietly = TRUE)) {
-  install.packages("ggdist")
-}
-
-library(tidyverse)
 
 # Download BMP data for analysis
 bmp_data <- arrow::read_feather("https://figshare.com/ndownloader/files/45407398")
@@ -78,11 +80,11 @@ bmp_data |>
 
 bmp_data |> 
   slice_head(n = 1000) |>
-  ggplot(aes(y = potassium_plas, x = luo_h > 100)) + 
-    geom_boxplot() + 
-    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
-    scale_x_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
-    coord_flip() +
+  ggplot(aes(x = potassium_plas, y = luo_h > 100)) + 
+    geom_boxplot() +
+    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.45, 2.45), label = c("H-Index < 100", "H-Index >= 100")), aes(x = x, y = y, label = label)) + 
+    scale_x_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_y_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
     theme(axis.title.x.bottom = element_blank())
 
 ```
@@ -96,15 +98,33 @@ bmp_data |>
 
 bmp_data |> 
   slice_head(n = 1000) |>
-  ggplot(aes(y = potassium_plas, x = luo_h > 100)) + 
-    geom_boxplot() + 
-    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
-    scale_x_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
-    coord_flip() +
+  ggplot(aes(x = potassium_plas, y = luo_h > 100)) + 
+    ggdist::stat_halfeye(trim = F) + 
+    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.15, 2.15), label = c("H-Index < 100", "H-Index >= 100")), aes(x = x, y = y, label = label)) + 
+    scico::scale_fill_scico_d() + 
+    scale_x_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_y_discrete(name = "Hemolysis", limits = c(F, T), labels = c("H-Index < 100", "H-Index >= 100")) +
     theme(axis.title.x.bottom = element_blank())
 
 ```
 
 ## Best
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+bmp_data |> 
+  slice_head(n = 1000) |>
+  ggplot(aes(y = potassium_plas, x = luo_h)) + 
+    geom_point(alpha = 0.5, size = 2, stroke = 0.1) + 
+    ggpmisc::stat_poly_eq() + 
+    scale_y_continuous(name = "Potassium (mmol/L)", limits = c(2, 8)) + 
+    scale_x_continuous(name = "Hemolysis Index") +
+    coord_cartesian(xlim = c(0, 100)) +
+    theme()
+
+```
 
 :::
