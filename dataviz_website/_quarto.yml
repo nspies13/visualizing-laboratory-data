@@ -2,15 +2,15 @@ project:
   type: website
 
 website:
-  title: "dataviz_website"
-  navbar:
-    left:
+  title: "Visualizing Laboratory Data"
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
       - href: index.qmd
         text: Home
       - href: best_practices.qmd
         text: "Best Practices"
-#      - href: geospatial.qmd
-#        text: "Geospatial"
       - about.qmd
 
 format:
@@ -24,15 +24,12 @@ format:
     grid:
       sidebar-width: 300px
       body-width: 1300px
-      margin-width: 0px
+      margin-width: 300px
       gutter-width: 1.5rem
     css: styles.css
     
 execute:
   cache: true
-
-bibliography: references.bib
-csl: nejm.csl
 
 editor: visual
 

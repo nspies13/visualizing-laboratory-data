@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "dataviz_website",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n\nShow the Code\n1 + 1\n\n\n[1] 2"
   },
   {
     "objectID": "about.html",
@@ -40,5 +40,96 @@
     "title": "Best Practices in Data Visualization",
     "section": "",
     "text": "Introduction\nGeospatial data is… ## TODO\n\n\nGetting Started\n\nDownload the Data\n\n# Install required packages if not already installed\nif (!requireNamespace(\"arrow\", quietly = TRUE)) {\n  install.packages(\"arrow\")\n}\nif (!requireNamespace(\"tidyverse\", quietly = TRUE)) {\n  install.packages(\"tidyverse\")\n}\nif (!requireNamespace(\"ggdist\", quietly = TRUE)) {\n  install.packages(\"ggdist\")\n}\nif (!requireNamespace(\"ggpmisc\", quietly = TRUE)) {\n  install.packages(\"ggpmisc\")\n}\n\nRegistered S3 methods overwritten by 'ggpp':\n  method                  from   \n  heightDetails.titleGrob ggplot2\n  widthDetails.titleGrob  ggplot2\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n✔ purrr     1.0.2     \n\n\n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# Set ggplot theme\ntheme_ns &lt;- theme(text = element_text(family = \"Helvetica\"),\n                  title = element_text(size = 14, margin = margin(0, 0, 8, 0)),\n                  plot.subtitle = element_text(size = 12, face = \"plain\", hjust = 0),\n                  plot.title = element_text(hjust = 0),\n                  axis.title = element_text(size = 12, face = \"bold\", margin = margin(4,4,4,4)),\n                  axis.title.x.bottom = element_text(face = \"bold\", margin = margin(4,0,0,0)),\n                  axis.title.y.left = element_text(face = \"bold\", margin = margin(0,4,0,0)),\n                  legend.title = element_text(face = \"bold.italic\", size = 12),\n                  axis.line = element_line(),\n                  axis.ticks = element_blank(),\n                  panel.grid = element_blank(), \n                  panel.background = element_blank(),\n                  strip.text = element_text(size = 10, face = \"bold.italic\"),\n                  strip.background = element_blank())\ntheme_set(theme_ns)\n\n# Download BMP data for analysis\nbmp_data &lt;- arrow::read_feather(\"https://figshare.com/ndownloader/files/45407398\")\n\n\n\n\nComparing Distributions\nLet’s start by comparing the distributions of potassium results.\n\nBaseGoodBetterBest\n\n\n\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(y = potassium_plas, x = luo_h &gt; 100)) + \n    geom_boxplot() + \n    scale_y_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_x_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    geom_boxplot() +\n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.45, 2.45), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    ggdist::stat_halfeye(trim = F) + \n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.15, 2.15), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scico::scale_fill_scico_d() + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(y = potassium_plas, x = luo_h)) + \n    geom_point(alpha = 0.5, size = 2, stroke = 0.1) + \n    ggpmisc::stat_poly_eq() + \n    scale_y_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_x_continuous(name = \"Hemolysis Index\") +\n    coord_cartesian(xlim = c(0, 100)) +\n    theme()"
+  },
+  {
+    "objectID": "best_practices.html#good",
+    "href": "best_practices.html#good",
+    "title": "Best Practices in Data Visualization",
+    "section": "Good",
+    "text": "Good\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    geom_boxplot() +\n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.45, 2.45), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())"
+  },
+  {
+    "objectID": "best_practices.html#better",
+    "href": "best_practices.html#better",
+    "title": "Best Practices in Data Visualization",
+    "section": "Better",
+    "text": "Better\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    ggdist::stat_halfeye(trim = F) + \n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.15, 2.15), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scico::scale_fill_scico_d() + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())"
+  },
+  {
+    "objectID": "best_practices.html#best",
+    "href": "best_practices.html#best",
+    "title": "Best Practices in Data Visualization",
+    "section": "Best",
+    "text": "Best\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(y = potassium_plas, x = luo_h)) + \n    geom_point(alpha = 0.5, size = 2, stroke = 0.1) + \n    ggpmisc::stat_poly_eq() + \n    scale_y_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_x_continuous(name = \"Hemolysis Index\") +\n    coord_cartesian(xlim = c(0, 100)) +\n    theme()"
+  },
+  {
+    "objectID": "dashboards.html",
+    "href": "dashboards.html",
+    "title": "Dashboards",
+    "section": "",
+    "text": "Question Here\n\n\n\n\n\n\n\n\n\n\n\nQuestion Here"
+  },
+  {
+    "objectID": "dashboards.html#example-1-xxx",
+    "href": "dashboards.html#example-1-xxx",
+    "title": "Dashboards",
+    "section": "",
+    "text": "Question Here"
+  },
+  {
+    "objectID": "dashboards.html#example-2-xxx",
+    "href": "dashboards.html#example-2-xxx",
+    "title": "Dashboards",
+    "section": "",
+    "text": "Question Here"
+  },
+  {
+    "objectID": "best_practices.html#comparing-distributions",
+    "href": "best_practices.html#comparing-distributions",
+    "title": "Best Practices in Data Visualization",
+    "section": "Comparing Distributions",
+    "text": "Comparing Distributions\nLet’s start by comparing the distributions of potassium results.\n\nBaseGoodBetterBest\n\n\n\n\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(y = potassium_plas, x = luo_h &gt; 100)) + \n    geom_boxplot() + \n    scale_y_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_x_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    geom_boxplot() +\n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.45, 2.45), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(x = potassium_plas, y = luo_h &gt; 100)) + \n    ggdist::stat_halfeye(trim = F) + \n    geom_text(data = tibble(x = c(4.1, 4.7), y = c(1.15, 2.15), label = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")), aes(x = x, y = y, label = label)) + \n    scico::scale_fill_scico_d() + \n    scale_x_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_y_discrete(name = \"Hemolysis\", limits = c(F, T), labels = c(\"H-Index &lt; 100\", \"H-Index &gt;= 100\")) +\n    theme(axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\nbmp_data |&gt; \n  slice_head(n = 1000) |&gt;\n  ggplot(aes(y = potassium_plas, x = luo_h)) + \n    geom_point(alpha = 0.5, size = 2, stroke = 0.1) + \n    ggpmisc::stat_poly_eq() + \n    scale_y_continuous(name = \"Potassium (mmol/L)\", limits = c(2, 8)) + \n    scale_x_continuous(name = \"Hemolysis Index\") +\n    coord_cartesian(xlim = c(0, 100)) +\n    theme()\n\n\n\n\n\n\n\n\nExplanation here"
+  },
+  {
+    "objectID": "best_practices.html#comparing-proportions",
+    "href": "best_practices.html#comparing-proportions",
+    "title": "Best Practices in Data Visualization",
+    "section": "Comparing Proportions",
+    "text": "Comparing Proportions\nNext, let’s explore how we might best display proportions.\n\nBaseGoodBetterBest\n\n\n\n\n\n\nShow the Code\ntoy_hil_data &lt;- \n  tibble(Location = c(\"ED\", \"ICU\", \"OP\"), Hemolysis = c(0.8, 0.5, 0.6), Icterus = c(0.1, 0.1, 0.2), Lipemia = c(0.1, 0.4, 0.2)) |&gt; \n    pivot_longer(-Location, names_to = \"Error\", values_to = \"Proportion\") |&gt; \n    mutate(Error = factor(Error, levels = c(\"Lipemia\", \"Icterus\", \"Hemolysis\")), Location = factor(Location, levels = c(\"ICU\", \"OP\", \"ED\")))\n\n# Make baseline pie chart\ntoy_hil_data |&gt; \n  ggplot(aes(x = \"\", y = Proportion, fill = Error, alpha = Location)) + \n    geom_bar(width = 1, stat = \"identity\") + \n    scale_fill_manual(values = c(\"blue\", \"green\", \"red\")) + \n    scale_alpha_manual(values = c(1, 0.8, 0.6)) +\n    coord_polar(\"y\", start = 0) +\n    ggtitle(\"Proportion of HIL Errors by Location\") +\n    theme_void() + \n    theme(plot.title = element_text(size = 24, face = \"bold.italic\", hjust = 0))\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\ntoy_hil_data |&gt; \n  ggplot(aes(x = Proportion, y = Location, fill = Error)) + \n    geom_col(alpha = 0.8) + \n    scale_fill_manual(values = c(\"blue\", \"green\", \"red\")) + \n    scale_alpha_manual(values = c(1, 0.8, 0.6)) +\n    ggtitle(\"Proportion of HIL Errors by Location\") +\n    theme(plot.title = element_text(size = 24, face = \"bold.italic\", hjust = 0))\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\ntoy_hil_data |&gt; \n  mutate(label = glue::glue(\"*{str_sub(Error, 1, 1)}*&lt;br&gt;**{Proportion}**\")) |&gt;\n  ggplot(aes(x = Proportion, y = Location, fill = Error)) + \n    geom_col(alpha = 0.9) + \n    ggtext::geom_richtext(aes(label = label), position = position_stack(vjust = 0.5), size = 8, fill = NA, label.color = NA) +\n    scico::scale_fill_scico_d(palette = \"bilbao\", begin = 0.9, end = 0.1) + \n    scale_alpha_manual(values = c(1, 0.8, 0.6)) +\n    scale_x_continuous(labels = c(\"0\", \"0.5\", \"1\"), breaks = c(0, 0.5, 1), expand = expansion(mult = c(0, 0.01))) + \n    scale_y_discrete(expand = expansion(mult = c(0.1, 0.1))) +\n    ggtitle(\"Proportion of HIL Errors by Location\") +\n    theme(plot.title = element_text(size = 24, face = \"bold.italic\", hjust = 0), legend.position = \"none\", axis.title.y.left = element_blank(), axis.text.y.left = element_text(size = 24, face = \"bold\", color = \"black\"), axis.text.x.bottom = element_text(size = 16, face = \"bold\", color = \"black\"), axis.title.x.bottom = element_blank())\n\n\n\n\n\n\n\n\nExplanation here\n\n\n\n\n\n\n\n\nShow the Code\ntoy_hil_data |&gt; \n  mutate(label = glue::glue(\"*{str_sub(Error, 1, 1)}*&lt;br&gt;**{Proportion}**\")) |&gt;\n  ggplot(aes(x = Proportion, y = Location, fill = Error)) + \n    geom_col(alpha = 0.9) + \n    ggtext::geom_richtext(aes(label = Proportion), nudge_x = 0.01, hjust = 0, size = 8, fill = NA, label.color = NA) +\n    facet_wrap(~fct_rev(Error), ncol = 3) +\n    scico::scale_fill_scico_d(palette = \"bilbao\", begin = 0.9, end = 0.1) + \n    scale_alpha_manual(values = c(1, 0.8, 0.6)) +\n    scale_x_continuous(limits = c(0, 1), labels = c(\"0\", \"0.5\", \"1\"), breaks = c(0, 0.5, 1), expand = expansion(mult = c(0, 0.05))) + \n    scale_y_discrete(expand = expansion(mult = c(0.1, 0.1))) +\n    coord_cartesian(clip = \"off\") +\n    ggtitle(\"Proportion of HIL Errors by Location\") +\n    theme(plot.title = element_text(size = 24, face = \"bold.italic\", hjust = 0), legend.position = \"none\", axis.title.y.left = element_blank(), axis.text.y.left = element_text(size = 24, face = \"bold\", color = \"black\"), axis.text.x.bottom = element_text(size = 16, face = \"bold\", color = \"black\"), axis.title.x.bottom = element_blank(), strip.text = element_text(size = 24, face = \"italic\", color = \"black\"), strip.clip = \"off\", panel.spacing.x = unit(2, \"lines\"))\n\n\n\n\n\n\n\n\nExplanation here"
+  },
+  {
+    "objectID": "best_practices.html#example-1-map-types",
+    "href": "best_practices.html#example-1-map-types",
+    "title": "Best Practices in Data Visualization",
+    "section": "Example 1: Map Types",
+    "text": "Example 1: Map Types"
+  },
+  {
+    "objectID": "best_practices.html#example-2-choosing-an-appropriate-scale",
+    "href": "best_practices.html#example-2-choosing-an-appropriate-scale",
+    "title": "Best Practices in Data Visualization",
+    "section": "Example 2: Choosing an Appropriate Scale",
+    "text": "Example 2: Choosing an Appropriate Scale"
+  },
+  {
+    "objectID": "best_practices.html#example-3-colors-legends-and-labels",
+    "href": "best_practices.html#example-3-colors-legends-and-labels",
+    "title": "Best Practices in Data Visualization",
+    "section": "Example 3: Colors, Legends, and Labels",
+    "text": "Example 3: Colors, Legends, and Labels"
+  },
+  {
+    "objectID": "best_practices.html#example-1-xxx",
+    "href": "best_practices.html#example-1-xxx",
+    "title": "Best Practices in Data Visualization",
+    "section": "Example 1: XXX",
+    "text": "Example 1: XXX\n\n\n\n\n\n\nQuestion Here"
+  },
+  {
+    "objectID": "best_practices.html#example-2-xxx",
+    "href": "best_practices.html#example-2-xxx",
+    "title": "Best Practices in Data Visualization",
+    "section": "Example 2: XXX",
+    "text": "Example 2: XXX\n\n\n\n\n\n\nQuestion Here"
   }
 ]

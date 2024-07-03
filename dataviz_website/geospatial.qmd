@@ -2,12 +2,6 @@
 title: "Analyzing Geospatial Data"
 ---
 
-# Introduction
-
-Geospatial data is... \## TODO
-
-# Getting Started
-
 ### Download the Data
 
 ```{r}
@@ -74,7 +68,7 @@ ggplot(gg_us_od_cartogram_input) +
   theme(legend.position = c(0.15, 0.1), legend.title.position = "top") 
 ```
 
-#  Data
+# Data
 
 ## TODO
 

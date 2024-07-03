@@ -49,13 +49,16 @@ bmp_data <- arrow::read_feather("https://figshare.com/ndownloader/files/45407398
 
 ```
 
-# Comparing Distributions
+# Best Practices
+## Comparing Distributions
 
 Let's start by comparing the distributions of potassium results.
 
 ::: panel-tabset
-## Base
+### Base
 
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -70,9 +73,20 @@ bmp_data |>
     theme(axis.title.x.bottom = element_blank())
 
 ```
+:::
 
-## Good
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Good
+
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -88,9 +102,19 @@ bmp_data |>
     theme(axis.title.x.bottom = element_blank())
 
 ```
+:::
 
-## Better
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Better
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -107,9 +131,19 @@ bmp_data |>
     theme(axis.title.x.bottom = element_blank())
 
 ```
+:::
 
-## Best
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Best
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -128,13 +162,23 @@ bmp_data |>
 ```
 :::
 
-# Comparing Proportions
+::: {.column width="5%"}
+:::
+
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+:::
+
+## Comparing Proportions
 
 Next, let's explore how we might best display proportions.
 
 ::: panel-tabset
-## Base
-
+### Base
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -157,9 +201,19 @@ toy_hil_data |>
     theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0))
 
 ```
+:::
 
-## Good
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Good
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -174,9 +228,19 @@ toy_hil_data |>
     theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0))
 
 ```
+:::
 
-## Better
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Better
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -195,9 +259,19 @@ toy_hil_data |>
     theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0), legend.position = "none", axis.title.y.left = element_blank(), axis.text.y.left = element_text(size = 24, face = "bold", color = "black"), axis.text.x.bottom = element_text(size = 16, face = "bold", color = "black"), axis.title.x.bottom = element_blank())
 
 ```
+:::
 
-## Best
+::: {.column width="5%"}
+:::
 
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+
+### Best
+::: columns
+::: {.column width="60%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -220,3 +294,49 @@ toy_hil_data |>
 ```
 :::
 
+::: {.column width="5%"}
+:::
+
+::: {.column width="35%"}
+Explanation here
+:::
+:::
+:::
+
+# Geospatial Analysis
+## Example 1: Map Types
+
+## Example 2: Choosing an Appropriate Scale
+
+## Example 3: Colors, Legends, and Labels
+
+# Dashboards
+## Example 1: XXX
+
+::: columns
+::: {.column width="60%"}
+![](images/PowerBI_example.png)
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="35%"}
+Question Here
+:::
+:::
+
+## Example 2: XXX
+
+::: columns
+::: {.column width="60%"}
+![](images/ShinyFlexdashboard_example.png)
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="35%"}
+Question Here
+:::
+:::
