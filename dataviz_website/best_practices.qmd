@@ -315,7 +315,7 @@ Explanation here
 
 ::: columns
 ::: {.column width="60%"}
-![](images/PowerBI_example.png)
+![](images/ShinyFlexdashboard_example.png)
 :::
 
 ::: {.column width="5%"}
@@ -330,7 +330,7 @@ Question Here
 
 ::: columns
 ::: {.column width="60%"}
-![](images/ShinyFlexdashboard_example.png)
+![](images/PowerBI_example.png)
 :::
 
 ::: {.column width="5%"}
@@ -338,5 +338,12 @@ Question Here
 
 ::: {.column width="35%"}
 Question Here
+
+Talking Points: 
+- Who is the target audience?
+- What metrics are most relevant? 
+- Does the current design acheive the goals? 
+- Is the information clear, concise, and easy to understand?
+- What could be removed or added?
 :::
 :::
