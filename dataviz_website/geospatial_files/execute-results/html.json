@@ -1,0 +1,14 @@
+{
+  "hash": "f3af4c8221769dc301f777f8ed656994",
+  "result": {
+    "markdown": "---\ntitle: \"Analyzing Geospatial Data\"\n---\n\n\n# Introduction\n\nGeospatial data is... \\## TODO\n\n# Data\n\n## TODO\n\n::: panel-tabset\n## Basic\n\n![](images/clipboard-862254984.png)\n\n## Good\n\n![](images/clipboard-2020489380.png)\n\n## Better\n\n![](images/clipboard-464717865.png)\n\n## Best\n\n![](images/clipboard-2079783085.png)\n:::\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 2\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

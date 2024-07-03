@@ -4,7 +4,7 @@ title: "Best Practices in Data Visualization"
 
 # Introduction
 
-Geospatial data is... \## TODO
+## TODO
 
 # Getting Started
 
@@ -25,7 +25,7 @@ if (!requireNamespace("ggpmisc", quietly = TRUE)) {
   install.packages("ggpmisc")
 }
 
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 
 # Set ggplot theme
 theme_ns <- theme(text = element_text(family = "Helvetica"),
@@ -126,5 +126,97 @@ bmp_data |>
     theme()
 
 ```
-
 :::
+
+# Comparing Proportions
+
+Next, let's explore how we might best display proportions.
+
+::: panel-tabset
+## Base
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+toy_hil_data <- 
+  tibble(Location = c("ED", "ICU", "OP"), Hemolysis = c(0.8, 0.5, 0.6), Icterus = c(0.1, 0.1, 0.2), Lipemia = c(0.1, 0.4, 0.2)) |> 
+    pivot_longer(-Location, names_to = "Error", values_to = "Proportion") |> 
+    mutate(Error = factor(Error, levels = c("Lipemia", "Icterus", "Hemolysis")), Location = factor(Location, levels = c("ICU", "OP", "ED")))
+
+# Make baseline pie chart
+toy_hil_data |> 
+  ggplot(aes(x = "", y = Proportion, fill = Error, alpha = Location)) + 
+    geom_bar(width = 1, stat = "identity") + 
+    scale_fill_manual(values = c("blue", "green", "red")) + 
+    scale_alpha_manual(values = c(1, 0.8, 0.6)) +
+    coord_polar("y", start = 0) +
+    ggtitle("Proportion of HIL Errors by Location") +
+    theme_void() + 
+    theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0))
+
+```
+
+## Good
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+toy_hil_data |> 
+  ggplot(aes(x = Proportion, y = Location, fill = Error)) + 
+    geom_col(alpha = 0.8) + 
+    scale_fill_manual(values = c("blue", "green", "red")) + 
+    scale_alpha_manual(values = c(1, 0.8, 0.6)) +
+    ggtitle("Proportion of HIL Errors by Location") +
+    theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0))
+
+```
+
+## Better
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+toy_hil_data |> 
+  mutate(label = glue::glue("*{str_sub(Error, 1, 1)}*<br>**{Proportion}**")) |>
+  ggplot(aes(x = Proportion, y = Location, fill = Error)) + 
+    geom_col(alpha = 0.9) + 
+    ggtext::geom_richtext(aes(label = label), position = position_stack(vjust = 0.5), size = 8, fill = NA, label.color = NA) +
+    scico::scale_fill_scico_d(palette = "bilbao", begin = 0.9, end = 0.1) + 
+    scale_alpha_manual(values = c(1, 0.8, 0.6)) +
+    scale_x_continuous(labels = c("0", "0.5", "1"), breaks = c(0, 0.5, 1), expand = expansion(mult = c(0, 0.01))) + 
+    scale_y_discrete(expand = expansion(mult = c(0.1, 0.1))) +
+    ggtitle("Proportion of HIL Errors by Location") +
+    theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0), legend.position = "none", axis.title.y.left = element_blank(), axis.text.y.left = element_text(size = 24, face = "bold", color = "black"), axis.text.x.bottom = element_text(size = 16, face = "bold", color = "black"), axis.title.x.bottom = element_blank())
+
+```
+
+## Best
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+#| warning: false
+
+toy_hil_data |> 
+  mutate(label = glue::glue("*{str_sub(Error, 1, 1)}*<br>**{Proportion}**")) |>
+  ggplot(aes(x = Proportion, y = Location, fill = Error)) + 
+    geom_col(alpha = 0.9) + 
+    ggtext::geom_richtext(aes(label = Proportion), nudge_x = 0.01, hjust = 0, size = 8, fill = NA, label.color = NA) +
+    facet_wrap(~fct_rev(Error), ncol = 3) +
+    scico::scale_fill_scico_d(palette = "bilbao", begin = 0.9, end = 0.1) + 
+    scale_alpha_manual(values = c(1, 0.8, 0.6)) +
+    scale_x_continuous(limits = c(0, 1), labels = c("0", "0.5", "1"), breaks = c(0, 0.5, 1), expand = expansion(mult = c(0, 0.05))) + 
+    scale_y_discrete(expand = expansion(mult = c(0.1, 0.1))) +
+    coord_cartesian(clip = "off") +
+    ggtitle("Proportion of HIL Errors by Location") +
+    theme(plot.title = element_text(size = 24, face = "bold.italic", hjust = 0), legend.position = "none", axis.title.y.left = element_blank(), axis.text.y.left = element_text(size = 24, face = "bold", color = "black"), axis.text.x.bottom = element_text(size = 16, face = "bold", color = "black"), axis.title.x.bottom = element_blank(), strip.text = element_text(size = 24, face = "italic", color = "black"), strip.clip = "off", panel.spacing.x = unit(2, "lines"))
+
+```
+:::
+

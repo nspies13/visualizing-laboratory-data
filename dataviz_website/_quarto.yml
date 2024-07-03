@@ -7,15 +7,32 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: geospatial.qmd
-        text: Geospatial
+      - href: best_practices.qmd
+        text: "Best Practices"
+#      - href: geospatial.qmd
+#        text: "Geospatial"
       - about.qmd
 
 format:
   html:
-    theme: cosmo
-    css: styles.css
     toc: true
+    toc-depth: 2
+    warning: false
+    code-fold: true
+    code-summary: "Show the Code"
+    embed-resources: true
+    grid:
+      sidebar-width: 300px
+      body-width: 1300px
+      margin-width: 0px
+      gutter-width: 1.5rem
+    css: styles.css
+    
+execute:
+  cache: true
+
+bibliography: references.bib
+csl: nejm.csl
 
 editor: visual
 
