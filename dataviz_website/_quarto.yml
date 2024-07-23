@@ -3,7 +3,7 @@ project:
 
 website:
   title: "Visualizing Laboratory Data"
-  sidebar:
+  navbar:
     style: "docked"
     search: true
     contents:
@@ -22,8 +22,7 @@ format:
     code-summary: "Show the Code"
     embed-resources: true
     grid:
-      sidebar-width: 300px
-      body-width: 1300px
+      body-width: 1600px
       margin-width: 300px
       gutter-width: 1.5rem
     css: styles.css

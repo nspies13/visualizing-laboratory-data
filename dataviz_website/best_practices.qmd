@@ -45,11 +45,12 @@ theme_ns <- theme(text = element_text(family = "Helvetica"),
 theme_set(theme_ns)
 
 # Download BMP data for analysis
-bmp_data <- arrow::read_feather("https://figshare.com/ndownloader/files/45407398")
+bmp_data <- arrow::read_feather("../inputs/bmp_data.feather")
 
 ```
 
-# Best Practices
+# Exercise 1: Best Practices
+
 ## Comparing Distributions
 
 Let's start by comparing the distributions of potassium results.
@@ -113,6 +114,7 @@ Explanation here
 :::
 
 ### Better
+
 ::: columns
 ::: {.column width="60%"}
 ```{r}
@@ -142,6 +144,7 @@ Explanation here
 :::
 
 ### Best
+
 ::: columns
 ::: {.column width="60%"}
 ```{r}
@@ -177,11 +180,10 @@ Next, let's explore how we might best display proportions.
 
 ::: panel-tabset
 ### Base
+
 ::: columns
-::: {.column width="60%"}
+::: {.column width="50%"}
 ```{r}
-#| fig.width: 8
-#| fig.height: 6
 #| warning: false
 
 toy_hil_data <- 
@@ -203,17 +205,15 @@ toy_hil_data |>
 ```
 :::
 
-::: {.column width="5%"}
-:::
-
-::: {.column width="35%"}
-Explanation here
+::: {.column width="50%"}
+<br><br><br><br> - This pie chart highlights the proportion of HIL errors by location.<br><br> - The ***size*** of the pie chart represents the ***proportion*** of errors.<br><br> - The ***color*** represents the ***type*** of error.<br><br> - The ***transparency*** represents the ***clinical context*** for the error<br><br> <br>
 :::
 :::
 
 ### Good
+
 ::: columns
-::: {.column width="60%"}
+::: {.column width="50%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -230,17 +230,29 @@ toy_hil_data |>
 ```
 :::
 
-::: {.column width="5%"}
-:::
+::: {.column width="50%"}
+::: panel-tabset
+<br><br><br><br>
 
-::: {.column width="35%"}
-Explanation here
+### Questions
+
+1.  What makes this version better than the pie chart?
+
+2.  What can still be improved?
+
+### Answers
+
+1.  This version is better than the pie chart because the **absolute and relative quantities are easier to interpret** in the stacked bar chart.
+
+2.  Improvements can still be made in the **clarity of the labels and the color scheme**.
+:::
 :::
 :::
 
 ### Better
+
 ::: columns
-::: {.column width="60%"}
+::: {.column width="50%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -261,17 +273,28 @@ toy_hil_data |>
 ```
 :::
 
-::: {.column width="5%"}
-:::
+::: {.column width="50%"}
+::: panel-tabset
+<br><br><br><br>
 
-::: {.column width="35%"}
-Explanation here
-:::
-:::
+### Questions
 
+1.  What improvements are made in this version?
+
+2.  What can still be improved?
+
+### Answers
+
+1.  This version **improves clarity by directly labeling** the graph with the relevant annotations and removing the legend.<br><br>It also uses a **color-blind friendly** color palette that **invokes the types of errors the colors represent**.
+
+2.  Improvements can still be in how easy it is to **compare across groups**.
+:::
+:::
+:::
 ### Best
+
 ::: columns
-::: {.column width="60%"}
+::: {.column width="50%"}
 ```{r}
 #| fig.width: 8
 #| fig.height: 6
@@ -294,6 +317,185 @@ toy_hil_data |>
 ```
 :::
 
+::: {.column width="50%"}
+::: panel-tabset
+<br><br><br><br>
+
+### Questions
+
+1.  What improvements are made in this version?
+
+2.  What trade-offs are made for this improvement?
+
+### Answers
+
+1.  This version **simplifies the direct comparisons across contexts** by aligning them vertical across different facets.
+
+2.  Breaking the bars into separate facets **fills up more space**.
+:::
+
+:::
+:::
+:::
+
+# Exercise 2: Geospatial Analysis
+
+```{r}
+
+# Set Up Geospatial Data
+Sys.setenv(PROJ_LIB = "/usr/local/share/proj")  # Adjust this path as needed
+Sys.setenv(GDAL_DATA = "/usr/local/share/gdal")  # Adjust this path as needed
+
+# Install required packages if not already installed
+if (!requireNamespace("sf", quietly = TRUE)) {
+  install.packages("sf")
+}
+if (!requireNamespace("terra", quietly = TRUE)) {
+  install.packages("terra")
+}
+if (!requireNamespace("sp", quietly = TRUE)) {
+  install.packages("sp")
+}
+
+# Load libraries
+library(sf)
+library(terra)
+library(sp)
+library(tidyverse)
+
+my_sf <- read_sf("~/git/educational_materials/DataViz/visualizing-laboratory-data-adlm/visualizing-laboratory-data/inputs/od_shapefile_illinois.shp")
+
+```
+
+## Example 1: Choosing the Appropriate Variable
+
+::: panel-tabset
+### Base
+
+::: columns
+::: {.column width="65%"}
+```{r}
+#| fig.width: 10
+#| fig.height: 6
+#| warning: false
+
+## Make Population Map
+gg_pop_diverg <- 
+  ggplot(my_sf) +
+    geom_sf(aes(fill = DP05_0001E), color = "black", linewidth = 0.1) +
+    scico::scale_fill_scico(palette = "vikO", begin = 0.15, end = 0.85, trans = scales::sqrt_trans(), breaks = c(10000, 5000000), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Population", direction = "vertical")) + 
+    theme_void() +
+    coord_sf(expand = T, clip = "off") +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Make Absolute Count Map
+gg_od_abs <- 
+  ggplot(my_sf) +
+    geom_sf(aes(fill = od_abs), color = "black", linewidth = 0.1) +
+    scico::scale_fill_scico(palette = "vikO", begin = 0.15, end = 0.85, trans = scales::sqrt_trans(), breaks = c(10, 100000), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Events", direction = "vertical")) + 
+    theme_void() +
+    coord_sf(expand = T, clip = "off") +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Combine Them
+ggpubr::ggarrange(gg_od_abs, gg_pop_diverg, ncol = 2, common.legend = F)
+
+```
+:::
+
+::: {.column width="35%"}
+<br><br><br><br> - This pie chart highlights the proportion of HIL errors by location.<br><br> - The ***size*** of the pie chart represents the ***proportion*** of errors.<br><br> - The ***color*** represents the ***type*** of error.<br><br> - The ***transparency*** represents the ***clinical context*** for the error<br><br> <br>
+:::
+:::
+
+### Better
+
+::: columns
+::: {.column width="65%"}
+```{r}
+#| fig.width: 10
+#| fig.height: 6
+#| warning: false
+
+## Make Population Map
+gg_pop_diverg <- 
+  ggplot(my_sf) +
+    geom_sf(aes(fill = DP05_0001E), color = "black", linewidth = 0.1) +
+    scico::scale_fill_scico(palette = "vikO", begin = 0.15, end = 0.85, trans = scales::sqrt_trans(), breaks = c(10000, 5000000), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Population", direction = "vertical")) + 
+    theme_void() +
+    coord_sf(expand = T, clip = "off") +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Make Absolute Count Map
+gg_od_pct <-  
+  ggplot(my_sf) +
+    geom_sf(aes(fill = od_pct), color = "black", linewidth = 0.1) + 
+    scico::scale_fill_scico(palette = "vikO", begin = 0.15, end = 0.85, breaks = c(0.001, 0.026), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Event Rate", direction = "vertical")) + 
+    theme_void() +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Combine Them
+ggpubr::ggarrange(gg_od_pct, gg_pop_diverg, ncol = 2, common.legend = F)
+
+```
+:::
+
+::: {.column width="35%"}
+::: panel-tabset
+<br><br><br><br>
+
+### Questions
+
+1.  What ?
+
+2.  What trade-offs are made for this improvement?
+
+### Answers
+
+1.  This version **simplifies the direct comparisons across contexts** by aligning them vertical across different facets.
+
+2.  Breaking the bars into separate facets **fills up more space**.
+:::
+:::
+:::
+
+### Best
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| fig.width: 10
+#| fig.height: 6
+#| warning: false
+
+## Make Population Map
+gg_pop_sequential <- 
+  ggplot(my_sf) +
+    geom_sf(aes(fill = DP05_0001E), color = "black", linewidth = 0.1) +
+    scico::scale_fill_scico(palette = "lipari", begin = 0.15, end = 0.85, trans = scales::sqrt_trans(), breaks = c(10000, 5000000), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Population", direction = "vertical")) + 
+    theme_void() +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Make Absolute Count Map
+gg_od_pct_seq <-  
+  ggplot(my_sf) +
+    geom_sf(aes(fill = od_pct), color = "black", linewidth = 0.1) + 
+    scico::scale_fill_scico(palette = "bilbao", begin = 0.85, end = 0.15, breaks = c(0.001, 0.026), labels = c("Lowest", "Highest")) + 
+    guides(fill = guide_colorbar(title ="Event Rate", direction = "vertical")) + 
+    theme_void() +
+    theme(legend.position = c(1.1, 0.66), legend.title.position = "top")
+
+## Combine Them
+ggpubr::ggarrange(gg_od_pct_seq, gg_pop_sequential, ncol = 2, common.legend = F)
+
+```
+:::
+
 ::: {.column width="5%"}
 :::
 
@@ -303,30 +505,9 @@ Explanation here
 :::
 :::
 
-# Geospatial Analysis
-## Example 1: Map Types
+# Exercise 3: Dashboards
 
-## Example 2: Choosing an Appropriate Scale
-
-## Example 3: Colors, Legends, and Labels
-
-# Dashboards
-## Example 1: XXX
-
-::: columns
-::: {.column width="60%"}
-![](images/ShinyFlexdashboard_example.png)
-:::
-
-::: {.column width="5%"}
-:::
-
-::: {.column width="35%"}
-Question Here
-:::
-:::
-
-## Example 2: XXX
+## Exploring a Real-World Dashboard
 
 ::: columns
 ::: {.column width="60%"}
@@ -339,11 +520,6 @@ Question Here
 ::: {.column width="35%"}
 Question Here
 
-Talking Points: 
-- Who is the target audience?
-- What metrics are most relevant? 
-- Does the current design acheive the goals? 
-- Is the information clear, concise, and easy to understand?
-- What could be removed or added?
+Talking Points: - Who is the target audience? - What metrics are most relevant? - Does the current design acheive the goals? - Is the information clear, concise, and easy to understand? - What could be removed or added?
 :::
 :::
